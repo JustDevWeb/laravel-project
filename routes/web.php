@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,8 +27,20 @@ Route::get('/about/', function () {
     return view('about');
 });
 
-Route::get('/news/', function () {
-    return view('news');
-});
+Route::group(['prefix' => 'category', 'as' => 'category'], function () {
+    Route::get('/', [CategoryController::class, 'show'])
+        ->name('.show');
+    Route::get('/{category}', [CategoryController::class, 'showByCategory'])
+        ->where('category', '^[A-Za-z]+$')
+        ->name('.current');
+}
+);
+
+Route::get('/news/', [NewsController::class, 'show'])
+    ->name('news.show');
+
+Route::get('/news/{id}', [NewsController::class, 'getNewsById'])
+    ->where('id', '\d+')
+    ->name('news.current');
 
 
